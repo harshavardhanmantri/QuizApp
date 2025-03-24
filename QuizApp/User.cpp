@@ -107,7 +107,8 @@ void User::logOut(const string& username, const bool& isLogedIn)
 {
     try {
         sql::Connection* con;
-        sql::PreparedStatement* pstmt;
+        sql::PreparedStatement* pstmt,* pstmt1;
+
         sql::ResultSet* res;
         Database database;
         con = database.useDatabase();
@@ -122,11 +123,11 @@ void User::logOut(const string& username, const bool& isLogedIn)
                 cout << "User is already Logged out" << std::endl;
             }
             else {
-                pstmt = con->prepareStatement("UPDATE users SET isLogedIn = ? WHERE username = ?");
-                pstmt->setBoolean(1, false);
-                pstmt->setString(2, username);
+                pstmt1 = con->prepareStatement("UPDATE users SET isLogedIn = ? WHERE username = ?");
+                pstmt1->setBoolean(1, false);
+                pstmt1->setString(2, username);
                 cout << "User is Logged Out" << endl;
-                int rowsAffected = pstmt->executeUpdate();
+                int rowsAffected = pstmt1->executeUpdate();
 
                 if (rowsAffected > 0) {
                     std::cout << "User is Logged Out" << std::endl;
@@ -137,12 +138,12 @@ void User::logOut(const string& username, const bool& isLogedIn)
             }
             break;
         }
-        
+
 
         // Update data
 
         delete res;
-        delete pstmt;
+        delete pstmt1;
     }
     catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
@@ -153,7 +154,7 @@ void User::logOut(const string& username, const bool& isLogedIn)
     catch (...) {
         std::cerr << "An unexpected error occurred." << std::endl;
     }
-    return ;
+    return;
 }
 
 

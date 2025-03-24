@@ -5,17 +5,17 @@
 
 class Quiz {
 public:
-	void createQuiz(const std::string& title, const std::string& description, std::int16_t score, bool isLogedIn, bool isAdmin);
-	void updateQuiz(const std::string& title, const std::string& description, std::int16_t score, bool isLogedIn, bool isAdmin);
-	void deleteQuiz(const int id);
-	void getAllQuizes();
-	void getQuizById(const int id);
+
+	Quiz() : title(""), description(""), isLogedIn(false), isAdmin(false) {}
+	void createQuiz(const std::string& title, const std::string& description, bool isLogedIn, bool isAdmin);
+	//void updateQuiz(const std::string& title, const std::string& description, bool isLogedIn, bool isAdmin);
+	void deleteQuizById(const int id, bool isLogedIn, bool isAdmin);
+	void getAllQuizes(bool isLogedIn, bool isAdmin);
+	void getQuizById(const int id,std::string username, bool isLogedIn, bool isAdmin);
 
 private:
 	std::string title;
 	std::string description;
-	std::vector<int> questions;
-	std::int16_t score;
 	bool isLogedIn;
 	bool isAdmin;
 };

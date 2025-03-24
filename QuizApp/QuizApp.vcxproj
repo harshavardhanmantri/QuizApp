@@ -131,12 +131,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Database.cpp" />
+    <ClCompile Include="Question.cpp" />
+    <ClCompile Include="Question.h" />
+    <ClCompile Include="QuestionSession.cpp" />
     <ClCompile Include="Quiz.cpp" />
     <ClCompile Include="QuizApp.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Database.h" />
+    <ClInclude Include="QuestionSession.h" />
     <ClInclude Include="Quiz.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="User.h" />

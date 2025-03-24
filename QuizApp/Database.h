@@ -1,3 +1,4 @@
+#pragma once
 #include<iostream>
 #include<string>
 
@@ -10,7 +11,6 @@ using namespace std;
 //for demonstration only. never save your password in the code!
 
 
-using namespace std;
 
 
 class Database {

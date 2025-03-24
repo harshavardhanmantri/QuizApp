@@ -43,9 +43,23 @@ const string password = "Harsha@7676";
         
         stmt = con->createStatement();
         stmt->execute("CREATE TABLE IF NOT EXISTS users (id INT PRIMARY KEY AUTO_INCREMENT,username VARCHAR(50) NOT NULL UNIQUE,password VARCHAR(50) NOT NULL,isAdmin BOOLEAN NOT NULL,isLogedIn BOOLEAN NOT NULL);");
-        cout << "Finished creating table" << endl;
+
+        delete stmt;
+
+        stmt = con->createStatement();
+        stmt->execute("CREATE TABLE IF NOT EXISTS quizes (quiz_id INT PRIMARY KEY AUTO_INCREMENT,title VARCHAR(100) NOT NULL,description TEXT);");
+        delete stmt;
+
+        stmt = con->createStatement();
+        stmt->execute("CREATE TABLE IF NOT EXISTS question (question_id INT PRIMARY KEY AUTO_INCREMENT,quiz_id INT NOT NULL,question_text TEXT NOT NULL,options TEXT,correct_answer TEXT,FOREIGN KEY(quiz_id) REFERENCES quizes(quiz_id));");
+        delete stmt;
+        stmt = con->createStatement();
+        stmt->execute("CREATE TABLE IF NOT EXISTS quiz_session (session_id INT PRIMARY KEY AUTO_INCREMENT,user_id INT NOT NULL,quiz_id INT NOT NULL,score INT,FOREIGN KEY(user_id) REFERENCES users(id),FOREIGN KEY(quiz_id) REFERENCES quizes(quiz_id));");
         delete stmt;
         return con;
+
+
+        
 
         //pstmt = con->prepareStatement("INSERT INTO inventory(name, quantity) VALUES(?,?)");
         //pstmt->setString(1, "banana");

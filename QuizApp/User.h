@@ -1,6 +1,4 @@
-
-#ifndef USER_H
-#define USER_H
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -23,4 +21,4 @@ private:
     bool isLogedIn;
 };
 
-#endif // USER_H
+// USER_H
