@@ -115,7 +115,6 @@ void Quiz::getAllQuizes(bool isLogedIn, bool isAdmin)
 
 void Quiz::getQuizById(const int id,string username, bool isLogedIn, bool isAdmin)
 {
-
     try {
         if (!isAdmin && isLogedIn) {
             sql::Connection* con;
@@ -125,18 +124,15 @@ void Quiz::getQuizById(const int id,string username, bool isLogedIn, bool isAdmi
             QuestionSession session;
             Question question;
             con = database.useDatabase();
-            cout << "hi";
             pstmt = con->prepareStatement("SELECT * FROM users WHERE username = ?");
 
             pstmt->setString(1, username);
-            cout << "hi";
 
             pstmt->execute();
             res = pstmt->executeQuery();
             int user_id=0;
             while (res->next()) {
              user_id = res->getInt("id");
-            cout << res->getInt("id") << user_id;
             break;
             }
             if (user_id) {

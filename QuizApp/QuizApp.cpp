@@ -2,6 +2,7 @@
 #include <iostream>
 #include<string>
 #include "Question.h"
+#include "QuestionSession.h"
 #include "User.h"
 #include "Quiz.h"
 #include "Database.h"
@@ -73,7 +74,7 @@ int main() {
     int choice;
     bool isLogedIn=true, isAdmin=false;
     Quiz quiz;
-
+	QuestionSession session;
     while (true) {
         mainMenu();
         cin >> choice;
@@ -92,6 +93,12 @@ int main() {
         case 5:
             getQuizById(isLogedIn,isAdmin);
             break;
+        case 6:
+            session.provideFeedback(isLogedIn,isAdmin);
+            break;
+		case 7:
+            session.provideHistory("harsha", isLogedIn, isAdmin);
+			break;
         default:
             cout << "Invalid choice. Please try again." << endl;
             break;
