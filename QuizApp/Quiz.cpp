@@ -8,13 +8,19 @@
 #include <cppconn/exception.h>
 #include <cppconn/prepared_statement.h>
 
-void Quiz::createQuiz(const std::string& title, const std::string& description, bool isLogedIn, bool isAdmin)
+void Quiz::createQuiz(bool isLogedIn, bool isAdmin)
 {
     try {
         if (isAdmin && isLogedIn) {
             sql::Connection* con;
             sql::PreparedStatement* pstmt;
             Database database;
+            string title, description;
+            cout << "Enter quiz title: ";cin.ignore(); // To ignore the newline character left in the buffer
+            getline(cin, title);
+            cout << "Enter quiz description: ";
+            cin.ignore(); // To ignore the newline character left in the buffer
+            getline(cin, description);
             con = database.useDatabase();
             pstmt = con->prepareStatement("INSERT INTO quizes(title, description) VALUES(?,?)");
             pstmt->setString(1, title);
@@ -38,39 +44,79 @@ void Quiz::createQuiz(const std::string& title, const std::string& description, 
     }
 }
 
-//void Quiz::updateQuiz(const std::string& title, const std::string& description, bool isLogedIn, bool isAdmin)
-//{
-//    try {
-//        if (isAdmin && isLogedIn) {
-//            sql::Connection* con;
-//            sql::PreparedStatement* pstmt;
-//            Database database;
-//            con = database.useDatabase();
-//            pstmt = con->prepareStatement("Update quizes set  INTO quizes(title, description) VALUES(?,?)");
-//            pstmt->setString(1, title);
-//            pstmt->setString(2, description);
-//            pstmt->execute();
-//            cout << "One row inserted." << endl;
-//            delete pstmt;
-//        }
-//        else {
-//            cout << "Admin is not loged IN" << std::endl;
-//        }
-//    }
-//    catch (sql::SQLException& e) {
-//        std::cerr << "SQL error: " << e.what() << std::endl;
-//    }
-//    catch (std::runtime_error& e) {
-//        std::cerr << "Runtime error: " << e.what() << std::endl;
-//    }
-//    catch (...) {
-//        cerr << "An unexpected error occurred." << endl;
-//    }
-//}
+void Quiz::updateQuiz(bool isLogedIn, bool isAdmin)
+{
+    try {
+        if (isAdmin && isLogedIn) {
+            sql::Connection* con;
+            sql::PreparedStatement* pstmt;
+            Database database;
+            int id;
+			cout << "Enter quiz id: ";
+			cin >> id;
+            string title, description;
+            cout << "Enter quiz title: ";cin.ignore(); // To ignore the newline character left in the buffer
+            getline(cin, title);
+            cout << "Enter quiz description: ";
+            cin.ignore();
+            getline(cin, description);
+            con = database.useDatabase();
+            pstmt = con->prepareStatement("UPDATE quizes SET title = ?, description = ? WHERE quiz_id = ?");
+            pstmt->setString(1, title);
+            pstmt->setString(2, description);
+            pstmt->setInt(3, id);
+            pstmt->execute();
+            cout << "One row UPDATED." << endl;
+            delete pstmt;
+        }
+        else {
+            cout << "Admin is not loged IN" << std::endl;
+        }
+    }
+    catch (sql::SQLException& e) {
+        std::cerr << "SQL error: " << e.what() << std::endl;
+    }
+    catch (std::runtime_error& e) {
+        std::cerr << "Runtime error: " << e.what() << std::endl;
+    }
+    catch (...) {
+        cerr << "An unexpected error occurred." << endl;
+    }
+}
 
 void Quiz::deleteQuizById(const int id, bool isLogedIn, bool isAdmin)
 {
-    return;
+	try {
+		if (isAdmin && isLogedIn) {
+			sql::Connection* con;
+			sql::PreparedStatement* pstmt;
+			Database database;
+			con = database.useDatabase();
+            pstmt = con->prepareStatement("DELETE FROM question WHERE quiz_id = ?");
+            pstmt->setInt(1, id);
+            pstmt->execute();
+            delete pstmt;
+
+			pstmt = con->prepareStatement("DELETE FROM quizes WHERE quiz_id = ?");
+			pstmt->setInt(1, id);
+			pstmt->execute();
+			cout << "One row deleted." << endl;
+			delete pstmt;
+		}
+		else {
+			cout << "Admin is not loged IN" << std::endl;
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+	}
+	catch (std::runtime_error& e) {
+		std::cerr << "Runtime error: " << e.what() << std::endl;
+	}
+	catch (...) {
+		cerr << "An unexpected error occurred." << endl;
+	}
+    
 }
 
 void Quiz::getAllQuizes(bool isLogedIn, bool isAdmin)
@@ -99,7 +145,13 @@ void Quiz::getAllQuizes(bool isLogedIn, bool isAdmin)
             }
         }
         else {
-            cout << "User is not loged IN" << std::endl;
+            cout << isAdmin;
+            if (isAdmin) {
+                cout << "Admin is not loged IN" << std::endl;
+            }
+            else {
+                cout << "User is not Loged in" << std::endl;
+            }
         }
     }
     catch (sql::SQLException& e) {

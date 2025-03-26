@@ -9,7 +9,7 @@
 using namespace std;
 
 
-bool User::login(const string& username, const string& password, const bool& isAdmin, const bool& isLogedIn) {
+bool User::login(const string& username, const string& password, bool& isAdmin, bool& isLogedIn) {
     try {
         sql::Connection* con;
         sql::PreparedStatement* pstmt;
@@ -22,7 +22,7 @@ bool User::login(const string& username, const string& password, const bool& isA
         pstmt->setString(1, username);
       
         res = pstmt->executeQuery();
-        bool isPresent = false;
+        bool isAdmin1,isPresent = false;
         while (res->next()) {
             if (res->getBoolean("isLogedIn") != true){
                 if (hashedPassword(password) == res->getString("password")) {
@@ -31,6 +31,7 @@ bool User::login(const string& username, const string& password, const bool& isA
                     pstmt->setString(2, username);
                     pstmt->executeUpdate();
                     cout << "isLogedIn updated to true for user: " << username << std::endl;
+					isLogedIn = true;
                 }
                 else {
                     cout << "Wrong password"<<endl;
@@ -38,7 +39,9 @@ bool User::login(const string& username, const string& password, const bool& isA
             }
             else {
                 cout << "User is already Logged in" << endl;
+                isLogedIn = true;
             }
+            isAdmin1 = res->getBoolean("isAdmin");
             isPresent = true;
             break;
         }
@@ -46,11 +49,26 @@ bool User::login(const string& username, const string& password, const bool& isA
             cout << "User Not Found" << endl;
             return false;
         }
+         
+        if (isAdmin != isAdmin1 && isAdmin == false) {
+            cout << "User is not an Admin" << endl;
+            return false;
+        }
+		else if (isAdmin != isAdmin1 && isAdmin == true) {
+			cout << "Admin is not an User" << endl;
+			return false;
+		}
+        else {
+			isAdmin = isAdmin1;
+            cout << "User/Admin is Logged in" << endl;
+            
+        }
 
         // Update data
-        
+
         delete res;
         delete pstmt;
+		return true;
     }
     catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;
@@ -64,13 +82,22 @@ bool User::login(const string& username, const string& password, const bool& isA
     return true;
 }
 
-void User::registerUser(const string& username, const string& password, const bool& isAdmin, const bool& isLogedIn)
+void User::registerUser(const string& username, const string& password, bool& isAdmin, bool& isLogedIn)
 {
     try {
         sql::Connection* con;
         sql::PreparedStatement* pstmt;
         Database database;
         con = database.useDatabase();
+        cout << "Register as:"<<endl<<"1.User "<<endl<<"2.Admin"<<endl;
+		int choice;
+        cin >> choice;
+		if (choice == 2) {
+			isAdmin = true;
+		}
+		else {
+			isAdmin = false;
+		}
         pstmt = con->prepareStatement("INSERT INTO users(username, password, isAdmin,isLogedIn) VALUES(?,?,?,?)");
         pstmt->setString(1, username);
         pstmt->setString(2, hashedPassword(password));
@@ -103,11 +130,11 @@ string User::hashedPassword(const string& password)
     return ss.str();
 }
 
-void User::logOut(const string& username, const bool& isLogedIn)
+void User::logOut(const string& username, bool& isLogedIn)
 {
     try {
         sql::Connection* con;
-        sql::PreparedStatement* pstmt,* pstmt1;
+        sql::PreparedStatement* pstmt, * pstmt1 = nullptr;
 
         sql::ResultSet* res;
         Database database;
@@ -126,6 +153,7 @@ void User::logOut(const string& username, const bool& isLogedIn)
                 pstmt1 = con->prepareStatement("UPDATE users SET isLogedIn = ? WHERE username = ?");
                 pstmt1->setBoolean(1, false);
                 pstmt1->setString(2, username);
+				isLogedIn = false;
                 cout << "User is Logged Out" << endl;
                 int rowsAffected = pstmt1->executeUpdate();
 
@@ -139,11 +167,12 @@ void User::logOut(const string& username, const bool& isLogedIn)
             break;
         }
 
-
         // Update data
 
         delete res;
-        delete pstmt1;
+        if (pstmt1 != nullptr) {
+            delete pstmt1;
+        }
     }
     catch (sql::SQLException& e) {
         std::cerr << "SQL error: " << e.what() << std::endl;

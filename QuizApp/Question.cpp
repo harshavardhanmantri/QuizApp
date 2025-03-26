@@ -56,7 +56,31 @@ void Question::createQuestion(int quizId, std::string questionText, std::string 
 
 void Question::deleteQuestionById(const int id, bool isLogedIn, bool isAdmin)
 {
-
+	try {
+		if (isAdmin && isLogedIn) {
+			sql::Connection* con;
+			sql::PreparedStatement* pstmt;
+			Database database;
+			con = database.useDatabase();
+			pstmt = con->prepareStatement("DELETE FROM question WHERE question_id = ?");
+			pstmt->setInt(1, id);
+			pstmt->execute();
+			cout << "One row deleted." << endl;
+			delete pstmt;
+		}
+		else {
+			cout << "Admin is not loged IN" << std::endl;
+		}
+	}
+	catch (sql::SQLException& e) {
+		std::cerr << "SQL error: " << e.what() << std::endl;
+	}
+	catch (std::runtime_error& e) {
+		std::cerr << "Runtime error: " << e.what() << std::endl;
+	}
+	catch (...) {
+		cerr << "An unexpected error occurred." << endl;
+	}
 }
 
 int Question::getAllQuestionsByQuizId(int quizId,bool isLogedIn, bool isAdmin)
@@ -121,7 +145,8 @@ int Question::getAllQuestionsByQuizId(int quizId,bool isLogedIn, bool isAdmin)
     return 0;
 }
 
-void Question::getQuestionById(const int id, bool isLogedIn, bool isAdmin)
-{
-    return;
-}
+//void Question::updateQuesitonById(const int id, bool isLogedIn, bool isAdmin)
+//{
+//
+//    return;
+//}
