@@ -154,7 +154,6 @@ void User::logOut(const string& username, bool& isLogedIn)
                 pstmt1->setBoolean(1, false);
                 pstmt1->setString(2, username);
 				isLogedIn = false;
-                cout << "User is Logged Out" << endl;
                 int rowsAffected = pstmt1->executeUpdate();
 
                 if (rowsAffected > 0) {

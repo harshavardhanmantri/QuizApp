@@ -51,9 +51,29 @@ void Quiz::updateQuiz(bool isLogedIn, bool isAdmin)
             sql::Connection* con;
             sql::PreparedStatement* pstmt;
             Database database;
+            sql::ResultSet* res;
             int id;
 			cout << "Enter quiz id: ";
 			cin >> id;
+			if (cin.fail()) {
+				cout << "Invalid Input" << endl;
+				cin.clear();
+				cin.ignore(256, '\n');
+				return;
+			}
+			//Check if the quiz id exists
+            con = database.useDatabase();
+            pstmt = con->prepareStatement("SELECT * FROM quizes WHERE quiz_id = ?");
+            pstmt->setInt(1, id);
+            res = pstmt->executeQuery();
+            if (!res->next()) {
+                cout << "Quiz ID not found." << endl;
+                delete res;
+                delete pstmt;
+                return;
+            }
+            delete res;
+            delete pstmt;
             string title, description;
             cout << "Enter quiz title: ";cin.ignore(); // To ignore the newline character left in the buffer
             getline(cin, title);
@@ -91,7 +111,26 @@ void Quiz::deleteQuizById(const int id, bool isLogedIn, bool isAdmin)
 			sql::Connection* con;
 			sql::PreparedStatement* pstmt;
 			Database database;
+            sql::ResultSet* res;
 			con = database.useDatabase();
+            //Check if the quiz id exists
+            con = database.useDatabase();
+            pstmt = con->prepareStatement("SELECT * FROM quizes WHERE quiz_id = ?");
+            pstmt->setInt(1, id);
+            res = pstmt->executeQuery();
+            if (!res->next()) {
+                cout << "Quiz ID not found." << endl;
+                delete res;
+                delete pstmt;
+                return;
+            }
+            //DELETE THE QUESTION_session RELATED TO THE QUIZ IS IMPORTANT DONT FORGET
+            pstmt = con->prepareStatement("DELETE FROM quiz_session WHERE quiz_id = ?");
+            pstmt->setInt(1, id);
+            pstmt->execute();
+            delete pstmt;
+
+			//DELETE THE QUESTIONS RELATED TO THE QUIZ IS IMPORTANT DONT FORGET
             pstmt = con->prepareStatement("DELETE FROM question WHERE quiz_id = ?");
             pstmt->setInt(1, id);
             pstmt->execute();
@@ -187,9 +226,13 @@ void Quiz::getQuizById(const int id,string username, bool isLogedIn, bool isAdmi
              user_id = res->getInt("id");
             break;
             }
+            //CHECK IF USER_ID IS THERE OR NOT
             if (user_id) {
+				//START THE QUIZ AND GET THE SESSION ID
                 int session_id = session.startQuiz(user_id, id, isLogedIn, isAdmin);
+				//GET THE SCORE AND SUBMIT THE QUIZ
                 int score = question.getAllQuestionsByQuizId(id, isLogedIn, isAdmin);
+				//SUBMIT THE QUIZ
                 session.submitQuiz(session_id, score, isLogedIn, isAdmin);
             }
             else {

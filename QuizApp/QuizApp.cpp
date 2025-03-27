@@ -73,9 +73,9 @@ static void mainMenuUser(bool isLogedIn, bool isAdmin) {
     QuestionSession session;
    
     while (true) {
-        cout << "\n=============================" << endl;
+        cout << "\n=================================================" << endl;
         cout << "       Welcome to the Quiz App" << endl;
-        cout << "=============================" << endl;
+        cout << "=================================================" << endl;
 
         cout << "1. Start a Quiz" << endl;
         cout << "2. User's History" << endl;
@@ -94,7 +94,7 @@ static void mainMenuUser(bool isLogedIn, bool isAdmin) {
             return;
         default:
             cout << "Invalid choice. Please try again." << endl;
-            break;
+            return;
         }
     }
 }
@@ -107,9 +107,9 @@ static void mainMenuAdmin(bool isLogedIn, bool isAdmin) {
     QuestionSession session;
     
     while (true) {
-        cout << "\n=============================" << endl;
+        cout << "\n=================================================" << endl;
         cout << "       Welcome to the Quiz App" << endl;
-        cout << "=============================" << endl;
+        cout << "=================================================" << endl;
         cout << "1. Add Quiz" << endl;
 		cout << "2. Get All Quizes" << endl;
 		cout << "3. Update Quiz" << endl;
@@ -129,6 +129,12 @@ static void mainMenuAdmin(bool isLogedIn, bool isAdmin) {
 			int id;
 			cout << "Enter the id of the quiz you want to delete: ";
 			cin >> id;
+            if (cin.fail()) {
+                cout << "Invalid Input" << endl;
+                cin.clear();
+                cin.ignore(256, '\n');
+                return;
+            }
 			quiz.deleteQuizById(id, isLogedIn, isAdmin);
 			break;
 		}
@@ -148,7 +154,7 @@ static void mainMenuAdmin(bool isLogedIn, bool isAdmin) {
 			return;
         default:
             cout << "Invalid choice. Please try again." << endl;
-            break;
+            return;
         }
     }
 }
@@ -160,9 +166,9 @@ int main() {
     QuestionSession session;
 
     while (true) {
-        cout << "\n=============================" << endl;
+        cout << "\n=================================================" << endl;
         cout << "       Welcome to the Quiz App" << endl;
-        cout << "=============================" << endl;
+        cout << "=================================================" << endl;
         cout << "1. Register User" << endl;
         cout << "2. Login as User" << endl;
         cout << "3. Login as Admin" << endl;
@@ -208,7 +214,7 @@ int main() {
             return 0;
         default:
             cout << "Invalid choice. Please try again." << endl;
-            continue;
+            return 0;
         }      
     }
 	return 0;
