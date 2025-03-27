@@ -140,7 +140,7 @@ int Question::getAllQuestionsByQuizId(int quizId,bool isLogedIn, bool isAdmin)
         std::cerr << "Runtime error: " << e.what() << std::endl;
     }
     catch (...) {
-        cerr << "An unexpected error occurred." << endl;
+        cerr << "An unexpected error occurred" << endl;
     }
     return 0;
 }

@@ -8,7 +8,7 @@
 #include <cppconn/prepared_statement.h>
 using namespace std;
 
-//for demonstration only. never save your password in the code!
+//for demonstration only. never save your password in the code
 
 
 
